@@ -1,0 +1,21 @@
+{
+    "name": "RealityCollective.UXManager.Editor",
+    "rootNamespace": "RealityCollective.UXManager.Editor",
+    "references": [
+        "RealityToolkit.UXManager",
+        "RealityCollective.ServiceFramework",
+        "RealityCollective.ServiceFramework.Editor",
+        "RealityCollective.Utilities"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
