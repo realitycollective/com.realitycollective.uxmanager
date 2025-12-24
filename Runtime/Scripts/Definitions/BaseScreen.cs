@@ -90,8 +90,22 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             root.Clear();
 
             root.styleSheets.Add(document.panelSettings.themeStyleSheet);
-            root.AddToClassList("container");
+            root.AddToClassList("uxScreenContainer");
             root.AddToClassList("portrait");
+
+            // Unity 6 can introduce competing USS selectors (ex: .container) and/or different
+            // panel defaults. Force the screen root to be fullscreen/absolute so multiple
+            // UIDocuments do not participate in parent flex layout.
+            root.style.position = Position.Absolute;
+            root.style.left = 0;
+            root.style.top = 0;
+            root.style.right = 0;
+            root.style.bottom = 0;
+            root.style.width = Length.Percent(100);
+            root.style.height = Length.Percent(100);
+            root.style.flexGrow = 0;
+            root.style.flexShrink = 0;
+            root.style.justifyContent = Justify.Center;
 
             root.pickingMode = PickingMode.Ignore;
 
