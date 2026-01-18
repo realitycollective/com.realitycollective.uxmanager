@@ -4,7 +4,7 @@
 using UnityEngine;
 using RealityCollective.ServiceFramework.Definitions;
 
-namespace RealityCollective.UXManager.Profiles
+namespace RealityCollective.UXManager.Profiles.Localization
 {
     /// <summary>
     /// Configuration profile for the LocalizationService.

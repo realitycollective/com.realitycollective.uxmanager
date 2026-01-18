@@ -18,7 +18,6 @@ namespace RealityCollective.UXManager.Editor
     {
         private const string OutputPath = "Assets/ServiceProvidersProfile/LocalizationKeys.g.cs";
         private const string DefaultCatalogPath = "Assets/UX/Localization/Catalogs/en-US.json";
-        private const string Namespace = "yperea";
 
         [MenuItem("Reality Toolkit/UX Manager/Generate Localization Keys")]
         public static void Generate()
@@ -64,7 +63,7 @@ namespace RealityCollective.UXManager.Editor
             sb.AppendLine("// Do not modify this file directly.");
             sb.AppendLine("// </auto-generated>");
             sb.AppendLine();
-            sb.AppendLine($"namespace {Namespace}");
+            sb.AppendLine("namespace RealityCollective.UXManager.Services.Localization");
             sb.AppendLine("{");
             sb.AppendLine("    /// <summary>");
             sb.AppendLine("    /// Auto-generated localization key constants from the default (en-US) locale catalog.");

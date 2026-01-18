@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 using RealityCollective.UXManager.Interfaces.ScreenManagement;
+using RealityCollective.UXManager.Interfaces.Localization;
 
 namespace RealityCollective.UXManager.Services.ScreenManagement
 {
@@ -18,6 +19,10 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
         private bool isLandscape = false;
         private bool isInitialized = false;
         internal IUXScreenManager uxScreenManager;
+
+        internal ILocalizationService localizationService;
+        protected ILocalizationService LocalizationService
+           => localizationService ??= ServiceManager.Instance?.GetService<ILocalizationService>();
 
         private void Start()
         {
@@ -110,6 +115,12 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             root.pickingMode = PickingMode.Ignore;
 
             GenerateUI(root);
+
+            // If localization is available, subscribe to locale changes
+            if (LocalizationService != null)
+            {
+                LocalizationService.OnLocaleChanged += HandleLocaleChanged;
+            }
         }
 
         /// <summary>
@@ -127,5 +138,7 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
         public virtual void ShowPanel() { }
 
         public virtual void HidePanel() { }
+
+        public virtual void HandleLocaleChanged(string newLocale) { }
     }
 }

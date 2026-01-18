@@ -3,14 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using RealityCollective.ServiceFramework.Interfaces;
 
-namespace RealityCollective.UXManager.Interfaces
+namespace RealityCollective.UXManager.Interfaces.Localization
 {
     /// <summary>
     /// Service for managing application localization and translations.
     /// Provides flat key/value lookup with automatic fallback to default locale.
     /// </summary>
-    public interface ILocalizationService
+    public interface ILocalizationService : IService
     {
         /// <summary>
         /// Gets the current active locale code (e.g., "en-US", "es-ES", "test")
@@ -39,7 +40,7 @@ namespace RealityCollective.UXManager.Interfaces
 
         /// <summary>
         /// Gets a localized display name for an enum value.
-        /// Key format: "enum_{EnumTypeName}_{EnumValue}" (e.g., "enum_SplitInteractiveCardType_Silent")
+        /// Key format: "enum_{EnumTypeName}_{EnumValue}" (e.g., "enum_CardType_Silent")
         /// </summary>
         /// <param name="value">Enum value to localize</param>
         /// <returns>Localized enum display name</returns>

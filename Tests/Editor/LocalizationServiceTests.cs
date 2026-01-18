@@ -2,9 +2,8 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using NUnit.Framework;
-using RealityCollective.UXManager.Interfaces;
-using RealityCollective.UXManager.Profiles;
-using RealityCollective.UXManager.Services;
+using RealityCollective.UXManager.Profiles.Localization;
+using RealityCollective.UXManager.Services.Localization;
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -8,12 +8,12 @@ using System.Linq;
 using Newtonsoft.Json;
 using RealityCollective.ServiceFramework.Services;
 using RealityCollective.UXManager.Extensions;
-using RealityCollective.UXManager.Interfaces;
-using RealityCollective.UXManager.Profiles;
 using RealityCollective.Utilities.Logging;
 using UnityEngine;
+using RealityCollective.UXManager.Interfaces.Localization;
+using RealityCollective.UXManager.Profiles.Localization;
 
-namespace RealityCollective.UXManager.Services
+namespace RealityCollective.UXManager.Services.Localization
 {
     /// <summary>
     /// Service for managing application localization and translations.
