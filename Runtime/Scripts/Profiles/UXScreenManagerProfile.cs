@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using RealityCollective.ServiceFramework.Definitions;
-using RealityCollective.ServiceFramework.Interfaces;
+using RealityCollective.UXManager.Interfaces.ScreenManagement;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +26,7 @@ namespace RealityCollective.UXManager.Profiles.ScreenManagement
     }
 
     [CreateAssetMenu(menuName = "UXScreenManagerProfile", fileName = "UXScreenManagerProfile", order = (int)CreateProfileMenuItemIndices.ServiceConfig)]
-    public class UXScreenManagerProfile : BaseServiceProfile<IServiceModule>
+    public class UXScreenManagerProfile : BaseServiceProfile<IUXScreenManager>
     {
         [SerializeField, ScreenKeyMappings]
         private List<ScreenKeyMapping> screenKeyMappings = new();
