@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -45,8 +46,15 @@ namespace RealityCollective.UXManager.Editor
             try
             {
                 string json = File.ReadAllText(DefaultCatalogPath);
-                var catalog = JsonUtility.FromJson<LocalizationCatalog>(json);
-                return catalog?.keys?.Keys.OrderBy(k => k).ToList();
+                var catalog = JsonConvert.DeserializeObject<LocalizationCatalog>(json);
+                
+                if (catalog?.keys == null || catalog.keys.Count == 0)
+                {
+                    Debug.LogError("[LocalizationKeysGenerator] Catalog has no keys or failed to deserialize.");
+                    return null;
+                }
+                
+                return catalog.keys.Keys.OrderBy(k => k).ToList();
             }
             catch (System.Exception ex)
             {
