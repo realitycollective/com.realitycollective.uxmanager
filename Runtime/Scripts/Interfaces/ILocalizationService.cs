@@ -39,6 +39,15 @@ namespace RealityCollective.UXManager.Interfaces.Localization
         string GetString(string key, params object[] parameters);
 
         /// <summary>
+        /// Attempts to get a localized string by key, returning a boolean to indicate success.
+        /// </summary>
+        /// <param name="key">Localization key (e.g., "mainscreen_time")</param>
+        /// <param name="value">The retrieved localized string, or fallback if key not found</param>
+        /// <param name="fallback">The fallback string to use if key is not found</param>
+        /// <returns>True if the key was found in current or default locale, false if fallback was used</returns>
+        bool TryGetString(string key, out string value, string fallback = "");
+
+        /// <summary>
         /// Gets a localized display name for an enum value.
         /// Key format: "enum_{EnumTypeName}_{EnumValue}" (e.g., "enum_CardType_Silent")
         /// </summary>

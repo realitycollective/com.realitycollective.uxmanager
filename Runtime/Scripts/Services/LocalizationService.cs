@@ -104,6 +104,35 @@ namespace RealityCollective.UXManager.Services.Localization
             return key;
         }
 
+        public bool TryGetString(string key, out string value, string fallback = "")
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                value = fallback;
+                return false;
+            }
+
+            // 1. Try current locale
+            if (currentCatalog != null && currentCatalog.TryGetValue(key, out value))
+            {
+                return true;
+            }
+
+            // 2. Fallback to default locale
+            if (defaultCatalog != null && defaultCatalog.TryGetValue(key, out value))
+            {
+                if (currentLocale != profile.DefaultLocale)
+                {
+                    StaticLogger.LogWarning($"[LocalizationService] Key '{key}' not found in locale '{currentLocale}', using default '{profile.DefaultLocale}'.");
+                }
+                return true;
+            }
+
+            // 3. Use provided fallback
+            value = fallback;
+            return false;
+        }
+
         public string GetEnumDisplayName(Enum value)
         {
             if (value == null)
