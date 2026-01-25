@@ -4,11 +4,11 @@
 using RealityCollective.UXManager.Interfaces.ScreenManagement;
 using RealityCollective.UXManager.Profiles.ScreenManagement;
 using RealityCollective.ServiceFramework.Services;
-using RealityCollective.Utilities.Extensions;
 using RealityCollective.Utilities.Logging;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using RealityCollective.Utilities.Extensions;
 
 namespace RealityCollective.UXManager.Services.ScreenManagement
 {

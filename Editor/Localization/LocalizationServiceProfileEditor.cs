@@ -267,15 +267,27 @@ namespace RealityCollective.UXManager.Editor.Localization
                 try
                 {
                     string json = File.ReadAllText(catalogFile);
-                    var catalog = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                    var catalog = JsonConvert.DeserializeObject<dynamic>(json);
 
                     if (catalog == null)
                     {
                         continue;
                     }
 
+                    var keys = new Dictionary<string, string>();
+                    if (catalog["keys"] != null)
+                    {
+                        var keysObj = catalog["keys"] as Newtonsoft.Json.Linq.JObject;
+                        if (keysObj != null)
+                        {
+                            foreach (var kvp in keysObj)
+                            {
+                                keys[kvp.Key] = kvp.Value?.ToString() ?? "";
+                            }
+                        }
+                    }
+
                     int keysAddedInFile = 0;
-                    var keys = catalog.ContainsKey("keys") ? catalog["keys"] as Dictionary<string, string> : new Dictionary<string, string>();
 
                     foreach (var key in locProfile.LocalizationKeys)
                     {
@@ -293,7 +305,9 @@ namespace RealityCollective.UXManager.Editor.Localization
 
                     if (keysAddedInFile > 0)
                     {
-                        catalog["keys"] = keys;
+                        // Convert back to JObject for serialization
+                        var keysJObject = Newtonsoft.Json.Linq.JObject.FromObject(keys);
+                        catalog["keys"] = keysJObject;
                         var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
                         File.WriteAllText(catalogFile, JsonConvert.SerializeObject(catalog, settings));
                         totalKeysAdded += keysAddedInFile;
@@ -335,6 +349,16 @@ namespace RealityCollective.UXManager.Editor.Localization
             var catalogFiles = Directory.GetFiles(catalogPath, "*.json");
             var profileKeys = new HashSet<string>(locProfile.LocalizationKeys.Where(k => !string.IsNullOrWhiteSpace(k.key)).Select(k => k.key));
 
+            Debug.Log($"[LocalizationServiceProfile] Profile has {profileKeys.Count} keys to validate");
+            foreach (var key in profileKeys.OrderBy(k => k).Take(5))
+            {
+                Debug.Log($"  - {key}");
+            }
+            if (profileKeys.Count > 5)
+            {
+                Debug.Log($"  ... and {profileKeys.Count - 5} more keys");
+            }
+
             int catalogsProcessed = 0;
             int totalErrors = 0;
 
@@ -343,17 +367,44 @@ namespace RealityCollective.UXManager.Editor.Localization
                 try
                 {
                     string json = File.ReadAllText(catalogFile);
-                    var catalog = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                    var catalog = JsonConvert.DeserializeObject<dynamic>(json);
 
                     if (catalog == null)
                     {
                         continue;
                     }
 
-                    var keys = catalog.ContainsKey("keys") ? catalog["keys"] as Dictionary<string, string> : new Dictionary<string, string>();
+                    var keys = new Dictionary<string, string>();
+                    if (catalog["keys"] != null)
+                    {
+                        var keysObj = catalog["keys"] as Newtonsoft.Json.Linq.JObject;
+                        if (keysObj != null)
+                        {
+                            foreach (var kvp in keysObj)
+                            {
+                                keys[kvp.Key] = kvp.Value?.ToString() ?? "";
+                            }
+                        }
+                    }
+
                     string catalogName = Path.GetFileNameWithoutExtension(catalogFile);
+                    Debug.Log($"[LocalizationServiceProfile] {catalogName}.json has {keys.Count} keys");
+
                     var missingKeys = profileKeys.Where(k => !keys.ContainsKey(k)).ToList();
                     var extraKeys = keys.Keys.Where(k => !profileKeys.Contains(k)).ToList();
+
+                    if (missingKeys.Count > 0)
+                    {
+                        Debug.Log($"  Missing keys ({missingKeys.Count}):");
+                        foreach (var key in missingKeys.Take(10))
+                        {
+                            Debug.Log($"    - {key}");
+                        }
+                        if (missingKeys.Count > 10)
+                        {
+                            Debug.Log($"    ... and {missingKeys.Count - 10} more");
+                        }
+                    }
 
                     if (missingKeys.Count > 0 || extraKeys.Count > 0)
                     {
@@ -585,16 +636,28 @@ namespace RealityCollective.UXManager.Editor.Localization
             try
             {
                 string json = File.ReadAllText(catalogFile);
-                var catalog = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                var catalog = JsonConvert.DeserializeObject<dynamic>(json);
 
-                if (catalog == null || !catalog.ContainsKey("keys"))
+                if (catalog == null)
                 {
-                    EditorUtility.DisplayDialog("Error", "Invalid catalog format or no 'keys' section found.", "OK");
+                    EditorUtility.DisplayDialog("Error", "Invalid catalog format.", "OK");
                     return;
                 }
 
-                var catalogKeys = catalog["keys"] as Dictionary<string, string>;
-                if (catalogKeys == null || catalogKeys.Count == 0)
+                var catalogKeys = new Dictionary<string, string>();
+                if (catalog["keys"] != null)
+                {
+                    var keysObj = catalog["keys"] as Newtonsoft.Json.Linq.JObject;
+                    if (keysObj != null)
+                    {
+                        foreach (var kvp in keysObj)
+                        {
+                            catalogKeys[kvp.Key] = kvp.Value?.ToString() ?? "";
+                        }
+                    }
+                }
+
+                if (catalogKeys.Count == 0)
                 {
                     EditorUtility.DisplayDialog("No Keys", "The catalog file contains no keys.", "OK");
                     return;

@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using RealityCollective.UXManager.Profiles.ScreenManagement;
 using RealityCollective.UXManager.Services.ScreenManagement;
-using RealityCollective.Utilities.Extensions;
 
 namespace RealityCollective.UXManager.Editor
 {
@@ -218,7 +217,7 @@ namespace RealityCollective.UXManager.Editor
 
         private string GetScreenTemplate(string name)
         {
-            return $@"using RealityCollective.Utilities.Extensions;
+            return $@"using UnityUIToolkit.Extensions;
 using RealityCollective.UXManager.Services.ScreenManagement;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
