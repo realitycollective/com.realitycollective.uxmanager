@@ -23,6 +23,7 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
         }
 
         private readonly Dictionary<string, Screen> ScreenCache = new();
+        private readonly Dictionary<string, string> ScreenNameToIdMapping = new(); // Maps handler ScreenNames to registered IDs
         private UXScreenManagerProfile profile;
         private List<string> visibleScreens = new();
         public List<string> VisibleScreens => visibleScreens;
@@ -54,19 +55,56 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             if (ScreenCache.ContainsKey(screenId))
             {
                 ScreenCache[screenId] = screen;
-                return;
             }
-            ScreenCache.Add(screenId, screen);
+            else
+            {
+                ScreenCache.Add(screenId, screen);
+            }
+
+            // Also register by handler's ScreenName if available, to handle GameObject name mismatches
+            if (screenObject.TryGetComponent<BaseScreenHandler>(out var handler))
+            {
+                string handlerScreenName = handler.ScreenName;
+                if (!string.IsNullOrWhiteSpace(handlerScreenName) && handlerScreenName != "None")
+                {
+                    if (handlerScreenName != screenId)
+                    {
+                        // Only map if the names are different to catch mismatches
+                        if (ScreenNameToIdMapping.ContainsKey(handlerScreenName))
+                        {
+                            ScreenNameToIdMapping[handlerScreenName] = screenId;
+                        }
+                        else
+                        {
+                            ScreenNameToIdMapping.Add(handlerScreenName, screenId);
+                        }
+                        StaticLogger.Log($"[UXScreenManager] Registered screen '{handlerScreenName}' (handler ScreenName) mapped to GameObject ID '{screenId}'. This allows the screen to be found even if GameObject name differs.");
+                    }
+                }
+            }
         }
 
         private string ResolveScreenId(string screenKeyOrId)
         {
             if (profile == null)
             {
+                // Check if this is a handler ScreenName that's mapped to a different GameObject ID
+                if (ScreenNameToIdMapping.ContainsKey(screenKeyOrId))
+                {
+                    return ScreenNameToIdMapping[screenKeyOrId];
+                }
                 return screenKeyOrId;
             }
 
-            return profile.ResolveScreenId(screenKeyOrId);
+            string resolvedId = profile.ResolveScreenId(screenKeyOrId);
+            
+            // If profile resolution didn't work, try our handler ScreenName mapping
+            if (!ScreenCache.ContainsKey(resolvedId) && ScreenNameToIdMapping.ContainsKey(screenKeyOrId))
+            {
+                resolvedId = ScreenNameToIdMapping[screenKeyOrId];
+            }
+
+            return resolvedId;
         }
 
         private Screen GenerateScreen(GameObject screenObject)
@@ -90,6 +128,20 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             if (ScreenCache.ContainsKey(screenId))
             {
                 ScreenCache.Remove(screenId);
+                
+                // Also remove any mappings that point to this screenId
+                var keysToRemove = new List<string>();
+                foreach (var kvp in ScreenNameToIdMapping)
+                {
+                    if (kvp.Value == screenId)
+                    {
+                        keysToRemove.Add(kvp.Key);
+                    }
+                }
+                foreach (var key in keysToRemove)
+                {
+                    ScreenNameToIdMapping.Remove(key);
+                }
             }
         }
 
