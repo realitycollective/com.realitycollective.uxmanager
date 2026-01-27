@@ -148,7 +148,11 @@ namespace RealityCollective.UXManager.Editor.Localization
             }
 
             string generatedCode = GenerateKeysCode();
-            string outputPath = "Assets/Scripts/Generated/LocalizationKeys.cs";
+            
+            // Generate next to the profile asset instead of a fixed location
+            string profilePath = AssetDatabase.GetAssetPath(locProfile);
+            string profileDirectory = Path.GetDirectoryName(profilePath);
+            string outputPath = Path.Combine(profileDirectory, "LocalizationKeys.g.cs");
 
             // Create directory if it doesn't exist
             string directory = Path.GetDirectoryName(outputPath);
@@ -485,12 +489,19 @@ namespace RealityCollective.UXManager.Editor.Localization
         public void ImportKeysFromGeneratedFile()
         {
             var locProfile = (LocalizationServiceProfile)ThisProfile;
+            
+            // First check next to the profile (preferred location)
+            string profilePath = AssetDatabase.GetAssetPath(locProfile);
+            string profileDirectory = Path.GetDirectoryName(profilePath);
+            string profileRelativePath = Path.Combine(profileDirectory, "LocalizationKeys.g.cs").Replace("\\", "/");
+            
             string[] searchPaths = new[]
             {
-                "Assets/Scripts/Generated/LocalizationKeys.g.cs",
-                "Assets/Scripts/Generated/LocalizationKeys.cs",
+                profileRelativePath, // Check next to profile first
                 "Assets/ServiceProvidersProfile/LocalizationKeys.g.cs",
                 "Assets/ServiceProvidersProfile/LocalizationKeys.cs",
+                "Assets/Scripts/Generated/LocalizationKeys.g.cs",
+                "Assets/Scripts/Generated/LocalizationKeys.cs",
             };
 
             string filePath = null;
@@ -733,12 +744,18 @@ namespace RealityCollective.UXManager.Editor.Localization
                 return;
             }
 
+            // First check next to the profile (preferred location)
+            string profilePath = AssetDatabase.GetAssetPath(targetProfile);
+            string profileDirectory = Path.GetDirectoryName(profilePath);
+            string profileRelativePath = Path.Combine(profileDirectory, "LocalizationKeys.g.cs").Replace("\\", "/");
+
             string[] searchPaths = new[]
             {
-                "Assets/Scripts/Generated/LocalizationKeys.g.cs",
-                "Assets/Scripts/Generated/LocalizationKeys.cs",
+                profileRelativePath, // Check next to profile first
                 "Assets/ServiceProvidersProfile/LocalizationKeys.g.cs",
                 "Assets/ServiceProvidersProfile/LocalizationKeys.cs",
+                "Assets/Scripts/Generated/LocalizationKeys.g.cs",
+                "Assets/Scripts/Generated/LocalizationKeys.cs",
             };
 
             string filePath = null;
