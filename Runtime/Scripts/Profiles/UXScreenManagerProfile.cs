@@ -31,6 +31,12 @@ namespace RealityCollective.UXManager.Profiles.ScreenManagement
         [SerializeField, ScreenKeyMappings]
         private List<ScreenKeyMapping> screenKeyMappings = new();
 
+        [SerializeField]
+        [Tooltip("Default delay (in seconds) to wait for screen hide transitions when force=false. Should match typical USS transition durations.")]
+        private float defaultTransitionDelay = 0.5f;
+
+        public float DefaultTransitionDelay => defaultTransitionDelay;
+
         public IReadOnlyList<ScreenKeyMapping> ScreenKeyMappings => screenKeyMappings;
 
         private Dictionary<string, string> keyToScreenId;

@@ -4,7 +4,7 @@
 using RealityCollective.ServiceFramework.Services;
 using UnityEngine;
 using RealityCollective.UXManager.Interfaces.ScreenManagement;
-using RealityCollective.UXManager.Interfaces;
+using RealityCollective.UXManager.Interfaces.Localization;
 
 namespace RealityCollective.UXManager.Services.ScreenManagement
 {
@@ -13,6 +13,9 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
         private IUXScreenManager uxScreenManager;
         protected IUXScreenManager UXScreenManager
            => uxScreenManager ??= ServiceManager.Instance?.GetService<IUXScreenManager>();
+        internal ILocalizationService localizationService;
+        protected ILocalizationService LocalizationService
+           => localizationService ??= ServiceManager.Instance?.GetService<ILocalizationService>();
 
         /// <summary>
         /// Code-facing key (ex: ScreenNames.Main). Typically set by derived handlers.

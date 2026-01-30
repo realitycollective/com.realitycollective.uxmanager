@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using RealityCollective.Utilities.Extensions;
+using RealityCollective.Utilities.Async;
 
 namespace RealityCollective.UXManager.Services.ScreenManagement
 {
@@ -97,7 +98,7 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             }
 
             string resolvedId = profile.ResolveScreenId(screenKeyOrId);
-            
+
             // If profile resolution didn't work, try our handler ScreenName mapping
             if (!ScreenCache.ContainsKey(resolvedId) && ScreenNameToIdMapping.ContainsKey(screenKeyOrId))
             {
@@ -128,7 +129,7 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             if (ScreenCache.ContainsKey(screenId))
             {
                 ScreenCache.Remove(screenId);
-                
+
                 // Also remove any mappings that point to this screenId
                 var keysToRemove = new List<string>();
                 foreach (var kvp in ScreenNameToIdMapping)
@@ -154,7 +155,7 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             if (!pauseNewScreens && !string.IsNullOrWhiteSpace(screenId) && ScreenCache.ContainsKey(screenId))
             {
                 var selectedScreen = ScreenCache[screenId];
-                if(selectedScreen.screenObject.TryGetComponent<BaseScreenHandler>(out var handler))
+                if (selectedScreen.screenObject.TryGetComponent<BaseScreenHandler>(out var handler))
                 {
                     if (!handler.IsInitialized)
                     {
@@ -167,7 +168,7 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
                 visibleScreens.EnsureListItem(screenKey);
             }
 
-            if(screenId == "None")
+            if (screenId == "None")
             {
                 HideAllScreens();
                 StaticLogger.Log("ShowScreen called with 'None' screen key.  Hiding all screens.");
@@ -184,9 +185,21 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
                     // If the screen has been disabled, skip it.
                     return;
                 }
-                ScreenCache[screenId].animatedPanel?.HidePanel();
-                ScreenCache[screenId].screenDocument.rootVisualElement.SendToBack();
-                visibleScreens.SafeRemoveListItem(screenKey);
+
+                var screen = ScreenCache[screenId];
+                screen.animatedPanel?.HidePanel();
+
+                if (force)
+                {
+                    // Immediate hide - no transition wait
+                    screen.screenDocument.rootVisualElement.SendToBack();
+                    visibleScreens.SafeRemoveListItem(screenKey);
+                }
+                else
+                {
+                    // Wait for transition using profile setting
+                    AwaiterExtensions.RunCoroutine(SendToBackAfterDelay(screenKey, screenId, profile.DefaultTransitionDelay));
+                }
             }
         }
 
@@ -235,5 +248,16 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
             return default;
         }
         #endregion IUXScreenManager implementation
+
+        private System.Collections.IEnumerator SendToBackAfterDelay(string screenKey, string screenId, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            if (ScreenCache.ContainsKey(screenId))
+            {
+                ScreenCache[screenId].screenDocument.rootVisualElement.SendToBack();
+                visibleScreens.SafeRemoveListItem(screenKey);
+            }
+        }
     }
 }
