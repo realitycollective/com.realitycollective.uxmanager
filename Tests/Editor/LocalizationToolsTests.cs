@@ -16,7 +16,7 @@ namespace RealityCollective.UXManager.Tests.Editor
     /// </summary>
     public class LocalizationToolsTests
     {
-        private const string CatalogPath = "Assets/UX/Localization/Catalogs";
+        private const string CatalogPath = "Assets/Resources/Localization/Catalogs";
         private const string DefaultCatalogFile = CatalogPath + "/en-US.json";
 
         [Test]

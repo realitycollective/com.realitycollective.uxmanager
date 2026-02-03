@@ -33,7 +33,7 @@ namespace RealityCollective.UXManager.Tests.Editor
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             defaultLocaleField?.SetValue(profile, "es-ES");
-            catalogPathField?.SetValue(profile, "Assets/UX/Localization/Catalogs");
+            catalogPathField?.SetValue(profile, "Assets/Resources/Localization/Catalogs");
             forceLocaleField?.SetValue(profile, "");
             supportedLocalesField?.SetValue(profile, new[] { "es-ES", "fr-FR" });
 
@@ -66,7 +66,7 @@ namespace RealityCollective.UXManager.Tests.Editor
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             defaultLocaleField?.SetValue(profile, "en-US");
-            catalogPathField?.SetValue(profile, "Assets/UX/Localization/Catalogs");
+            catalogPathField?.SetValue(profile, "Assets/Resources/Localization/Catalogs");
             forceLocaleField?.SetValue(profile, "test");
             supportedLocalesField?.SetValue(profile, new[] { "en-US", "es-ES", "fr-FR", "test" });
 
@@ -368,7 +368,7 @@ namespace RealityCollective.UXManager.Tests.Editor
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             defaultLocaleField?.SetValue(profile, defaultLocale);
-            catalogPathField?.SetValue(profile, "Assets/UX/Localization/Catalogs");
+            catalogPathField?.SetValue(profile, "Assets/Resources/Localization/Catalogs");
             forceLocaleField?.SetValue(profile, forceLocale);
             supportedLocalesField?.SetValue(profile, new[] { "en-US", "es-ES", "fr-FR", "test" });
 

@@ -19,7 +19,7 @@ Make sure to always use the same source for all toolkit modules. Avoid using dif
 
 2. Inside the Package Manager, click on the "+" button on the top left and select "Add package from git URL..."
 
-3. Input the following URL: https://github.com/realitycollective/com.realitytoolkit.uxmanager.git and click "Add".
+3. Input the following URL: <https://github.com/realitycollective/com.realitytoolkit.uxmanager.git> and click "Add".
 
 ### Method 2: OpenUPM
 

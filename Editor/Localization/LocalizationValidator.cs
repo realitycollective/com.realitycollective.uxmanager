@@ -13,13 +13,16 @@ namespace RealityCollective.UXManager.Editor
     /// <summary>
     /// Editor tool to validate localization catalog completeness.
     /// Ensures all non-default locale files contain all keys from the default locale.
+    /// 
+    /// IMPORTANT: Catalog files must be located in a Resources folder (e.g., Assets/Resources/Localization/Catalogs/)
+    /// to be included in builds. Check the LocalizationServiceProfile for the configured catalog path.
     /// </summary>
     public static class LocalizationValidator
     {
         [MenuItem("Reality Toolkit/UX Manager/Validate Locale Completeness")]
         public static void Validate()
         {
-            string catalogPath = "Assets/UX/Localization/Catalogs";
+            string catalogPath = "Assets/Resources/Localization/Catalogs";
             string defaultCatalog = Path.Combine(catalogPath, "en-US.json");
 
             if (!Directory.Exists(catalogPath))

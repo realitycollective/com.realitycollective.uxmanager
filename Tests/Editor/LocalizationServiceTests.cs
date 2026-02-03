@@ -35,7 +35,7 @@ namespace RealityCollective.UXManager.Tests.Editor
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             defaultLocaleField?.SetValue(testProfile, "en-US");
-            catalogPathField?.SetValue(testProfile, "Assets/UX/Localization/Catalogs");
+            catalogPathField?.SetValue(testProfile, "Assets/Resources/Localization/Catalogs");
             forceLocaleField?.SetValue(testProfile, "");
             supportedLocalesField?.SetValue(testProfile, new[] { "en-US", "es-ES", "fr-FR", "test" });
 

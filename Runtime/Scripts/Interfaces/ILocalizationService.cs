@@ -70,6 +70,9 @@ namespace RealityCollective.UXManager.Interfaces.Localization
 
         /// <summary>
         /// Gets the CultureInfo for the current locale.
+        /// CENTRAL POINT for device locale discovery - maps system language → supported locale → CultureInfo.
+        /// Use this in screens/components for locale-aware formatting (dates, numbers, etc).
+        /// DO NOT directly access Application.systemLanguage - use this method instead.
         /// Falls back to system culture if service is unavailable or locale cannot be resolved.
         /// </summary>
         /// <returns>CultureInfo for current locale or system default</returns>

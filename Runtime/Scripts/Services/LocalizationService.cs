@@ -3,11 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using RealityCollective.ServiceFramework.Services;
 using RealityCollective.UXManager.Extensions;
+using RealityCollective.UXManager.Utilities.Localization;
 using RealityCollective.Utilities.Logging;
 using UnityEngine;
 using RealityCollective.UXManager.Interfaces.Localization;
@@ -26,6 +25,7 @@ namespace RealityCollective.UXManager.Services.Localization
         private Dictionary<string, string> currentCatalog;
         private Dictionary<string, string> defaultCatalog;
         private string currentLocale;
+        private System.Globalization.CultureInfo cachedCultureInfo;
 
         public string CurrentLocale => currentLocale;
         public string DefaultLocale => profile.DefaultLocale;
@@ -42,6 +42,9 @@ namespace RealityCollective.UXManager.Services.Localization
         public override void Initialize()
         {
             base.Initialize();
+
+            // Log startup diagnostics
+            LogStartupDiagnostics();
 
             // Load default locale catalog (always needed for fallback)
             defaultCatalog = LoadCatalog(profile.DefaultLocale);
@@ -64,10 +67,16 @@ namespace RealityCollective.UXManager.Services.Localization
             {
                 // Try to use system locale
                 string systemLocale = Application.systemLanguage.ToLocaleCode();
+                StaticLogger.Log($"[LocalizationService] System language detected: {Application.systemLanguage} → {systemLocale}");
+                
                 if (profile.SupportedLocales.Contains(systemLocale))
                 {
                     initialLocale = systemLocale;
-                    StaticLogger.Log($"[LocalizationService] Detected system locale: {systemLocale}");
+                    StaticLogger.Log($"[LocalizationService] System locale '{systemLocale}' is supported. Using it.");
+                }
+                else
+                {
+                    StaticLogger.LogWarning($"[LocalizationService] System locale '{systemLocale}' is NOT in supported locales. Falling back to default '{profile.DefaultLocale}'.");
                 }
             }
 
@@ -148,22 +157,39 @@ namespace RealityCollective.UXManager.Services.Localization
             return GetString(key);
         }
 
+        /// <summary>
+        /// CENTRAL POINT for device locale discovery.
+        /// Returns the CultureInfo for the current locale, which includes date/time formatting, number formatting, and other culture-specific rules.
+        /// This should be used by UI components that need locale-aware formatting (dates, numbers, etc).
+        /// Screens should call this to get CultureInfo for date/time formatting - DO NOT access Application.systemLanguage directly.
+        /// </summary>
         public System.Globalization.CultureInfo GetCurrentCultureInfo()
         {
             if (string.IsNullOrEmpty(currentLocale))
             {
+                StaticLogger.LogWarning($"[LocalizationService] GetCurrentCultureInfo called but currentLocale is not set. Using system default culture.");
                 return System.Globalization.CultureInfo.CurrentCulture;
+            }
+
+            // Return cached CultureInfo to avoid repeated creation
+            if (cachedCultureInfo != null)
+            {
+                return cachedCultureInfo;
             }
 
             try
             {
                 // Convert locale code (e.g., "en-US") to CultureInfo
-                return System.Globalization.CultureInfo.GetCultureInfo(currentLocale);
+                // This is the central resolution point - device locale → supported locale → CultureInfo
+                cachedCultureInfo = System.Globalization.CultureInfo.GetCultureInfo(currentLocale);
+                StaticLogger.Log($"[LocalizationService] Device locale resolved: '{currentLocale}' → CultureInfo({cachedCultureInfo.Name}, {cachedCultureInfo.DisplayName}).");
+                return cachedCultureInfo;
             }
-            catch
+            catch (Exception ex)
             {
-                StaticLogger.LogWarning($"[LocalizationService] Could not create CultureInfo for locale '{currentLocale}'. Using system default.");
-                return System.Globalization.CultureInfo.CurrentCulture;
+                StaticLogger.LogWarning($"[LocalizationService] Could not create CultureInfo for locale '{currentLocale}': {ex.Message}. Using system default.");
+                cachedCultureInfo = System.Globalization.CultureInfo.CurrentCulture;
+                return cachedCultureInfo;
             }
         }
 
@@ -191,46 +217,48 @@ namespace RealityCollective.UXManager.Services.Localization
 
             currentCatalog = newCatalog;
             currentLocale = localeCode;
+            cachedCultureInfo = null; // Clear cache when locale changes
 
-            StaticLogger.Log($"[LocalizationService] Locale changed to '{currentLocale}' ({currentCatalog.Count} keys loaded).");
+            StaticLogger.Log($"[LocalizationService] ✓ Locale resolved to '{currentLocale}' ({currentCatalog.Count} keys loaded).");
             OnLocaleChanged?.Invoke(currentLocale);
         }
 
         private Dictionary<string, string> LoadCatalog(string localeCode)
         {
-            string filePath = Path.Combine(profile.CatalogPath, $"{localeCode}.json");
+#if UNITY_ADDRESSABLES
+            if (profile.LoadingStrategy == CatalogLoadingStrategy.Addressables)
+            {
+                return AddressablesCatalogLoader.LoadCatalog(profile.CatalogPath, localeCode);
+            }
+#endif
+            return ResourcesCatalogLoader.LoadCatalog(profile.CatalogPath, localeCode);
+        }
+
+
+        private void LogStartupDiagnostics()
+        {
+            StaticLogger.Log($"[LocalizationService] ========== LOCALIZATION STARTUP DIAGNOSTICS ==========");
+            StaticLogger.Log($"[LocalizationService] Loading Strategy: {profile.LoadingStrategy}");
+            StaticLogger.Log($"[LocalizationService] Default Locale: {profile.DefaultLocale}");
+            StaticLogger.Log($"[LocalizationService] Supported Locales: {string.Join(", ", profile.SupportedLocales)}");
+            StaticLogger.Log($"[LocalizationService] Catalog Path: {profile.CatalogPath}");
             
-            // Handle both relative and absolute paths
-            if (!Path.IsPathRooted(filePath))
+            // Use appropriate loader's diagnostics
+#if UNITY_ADDRESSABLES
+            if (profile.LoadingStrategy == CatalogLoadingStrategy.Addressables)
             {
-                filePath = Path.Combine(Application.dataPath, "..", filePath);
+                AddressablesCatalogLoader.LogDiagnostics(profile.CatalogPath);
             }
+            else
+            {
+                ResourcesCatalogLoader.LogDiagnostics(profile.CatalogPath);
+            }
+#else
+            ResourcesCatalogLoader.LogDiagnostics(profile.CatalogPath);
+#endif
 
-            if (!File.Exists(filePath))
-            {
-                StaticLogger.LogError($"[LocalizationService] Catalog file not found: {filePath}");
-                return null;
-            }
-
-            try
-            {
-                string json = File.ReadAllText(filePath);
-                var catalog = JsonConvert.DeserializeObject<LocalizationCatalog>(json);
-                
-                if (catalog == null || catalog.keys == null)
-                {
-                    StaticLogger.LogError($"[LocalizationService] Invalid catalog format in: {filePath}");
-                    return null;
-                }
-
-                StaticLogger.Log($"[LocalizationService] Loaded {catalog.keys.Count} keys from '{localeCode}'.");
-                return catalog.keys;
-            }
-            catch (Exception ex)
-            {
-                StaticLogger.LogError($"[LocalizationService] Error loading catalog '{localeCode}': {ex.Message}");
-                return null;
-            }
+            StaticLogger.Log($"[LocalizationService] System Language: {Application.systemLanguage}");
+            StaticLogger.Log($"[LocalizationService] ====================================================");
         }
 
         private string FormatString(string value, object[] parameters)
@@ -249,16 +277,6 @@ namespace RealityCollective.UXManager.Services.Localization
                 StaticLogger.LogError($"[LocalizationService] Format error for value '{value}': {ex.Message}");
                 return value;
             }
-        }
-
-        /// <summary>
-        /// Internal catalog structure for JSON deserialization.
-        /// </summary>
-        private class LocalizationCatalog
-        {
-            public string locale { get; set; }
-            public string version { get; set; }
-            public Dictionary<string, string> keys { get; set; } = new Dictionary<string, string>();
         }
     }
 }

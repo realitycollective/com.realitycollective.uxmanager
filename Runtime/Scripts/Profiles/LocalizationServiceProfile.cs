@@ -10,6 +10,25 @@ using RealityCollective.UXManager.Services.Localization;
 namespace RealityCollective.UXManager.Profiles.Localization
 {
     /// <summary>
+    /// Loading strategy for localization catalogs.
+    /// </summary>
+    public enum CatalogLoadingStrategy
+    {
+        /// <summary>
+        /// Load catalogs from Unity Resources folder. All catalogs bundled with app.
+        /// </summary>
+        Resources,
+        
+#if UNITY_ADDRESSABLES
+        /// <summary>
+        /// Load catalogs via Unity Addressables. Enables on-demand loading and remote updates.
+        /// Only available when Addressables package is installed.
+        /// </summary>
+        Addressables
+#endif
+    }
+
+    /// <summary>
     /// Configuration profile for the LocalizationService.
     /// Specifies default locale, supported locales, catalog path, and testing options.
     /// </summary>
@@ -26,8 +45,12 @@ namespace RealityCollective.UXManager.Profiles.Localization
         private string defaultLocale = "en-US";
 
         [SerializeField]
-        [Tooltip("Path to locale catalog files (e.g., 'Assets/UX/Localization/Catalogs'). Catalog files should be JSON format: {locale}.json")]
-        private string catalogPath = "Assets/UX/Localization/Catalogs";
+        [Tooltip("Strategy for loading catalog files. Resources: bundled with app (default). Addressables: on-demand loading with remote update support (requires Addressables package).")]
+        private CatalogLoadingStrategy loadingStrategy = CatalogLoadingStrategy.Resources;
+
+        [SerializeField]
+        [Tooltip("Path to locale catalog files (e.g., 'Assets/Resources/Localization/Catalogs'). For Resources: must be in Resources folder. For Addressables: path or label for addressable assets. Catalog files should be JSON format: {locale}.json")]
+        private string catalogPath = "Assets/Resources/Localization/Catalogs";
 
         [Header("Keys Management")]
 
@@ -46,6 +69,7 @@ namespace RealityCollective.UXManager.Profiles.Localization
         private string[] supportedLocales = new[] { "en-US", "es-ES", "fr-FR", "test" };
 
         public string DefaultLocale => defaultLocale;
+        public CatalogLoadingStrategy LoadingStrategy => loadingStrategy;
         public string CatalogPath => catalogPath;
         public string ForceLocale => forceLocale;
         public string[] SupportedLocales => supportedLocales;

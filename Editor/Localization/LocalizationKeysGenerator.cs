@@ -14,11 +14,14 @@ namespace RealityCollective.UXManager.Editor
     /// <summary>
     /// Editor tool to auto-generate LocalizationKeys.g.cs from the default locale catalog.
     /// Similar to ScreenNamesGenerator, this creates constants for all localization keys.
+    /// 
+    /// IMPORTANT: Catalog files must be located in a Resources folder (e.g., Assets/Resources/Localization/Catalogs/)
+    /// to be included in builds. The default path is defined in DefaultCatalogPath constant below.
     /// </summary>
     public static class LocalizationKeysGenerator
     {
         private const string OutputPath = "Assets/ServiceProvidersProfile/LocalizationKeys.g.cs";
-        private const string DefaultCatalogPath = "Assets/UX/Localization/Catalogs/en-US.json";
+        private const string DefaultCatalogPath = "Assets/Resources/Localization/Catalogs/en-US.json";
 
         [MenuItem("Reality Toolkit/UX Manager/Generate Localization Keys")]
         public static void Generate()
