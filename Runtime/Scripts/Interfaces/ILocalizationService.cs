@@ -67,5 +67,12 @@ namespace RealityCollective.UXManager.Interfaces.Localization
         /// UI systems should subscribe to refresh text content.
         /// </summary>
         event Action<string> OnLocaleChanged;
+
+        /// <summary>
+        /// Gets the CultureInfo for the current locale.
+        /// Falls back to system culture if service is unavailable or locale cannot be resolved.
+        /// </summary>
+        /// <returns>CultureInfo for current locale or system default</returns>
+        System.Globalization.CultureInfo GetCurrentCultureInfo();
     }
 }

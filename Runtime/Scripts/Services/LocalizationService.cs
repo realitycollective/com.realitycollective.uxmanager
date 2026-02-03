@@ -148,6 +148,25 @@ namespace RealityCollective.UXManager.Services.Localization
             return GetString(key);
         }
 
+        public System.Globalization.CultureInfo GetCurrentCultureInfo()
+        {
+            if (string.IsNullOrEmpty(currentLocale))
+            {
+                return System.Globalization.CultureInfo.CurrentCulture;
+            }
+
+            try
+            {
+                // Convert locale code (e.g., "en-US") to CultureInfo
+                return System.Globalization.CultureInfo.GetCultureInfo(currentLocale);
+            }
+            catch
+            {
+                StaticLogger.LogWarning($"[LocalizationService] Could not create CultureInfo for locale '{currentLocale}'. Using system default.");
+                return System.Globalization.CultureInfo.CurrentCulture;
+            }
+        }
+
         public void SetLocale(string localeCode)
         {
             if (string.IsNullOrWhiteSpace(localeCode))
