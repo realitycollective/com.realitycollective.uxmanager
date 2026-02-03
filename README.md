@@ -34,3 +34,62 @@ This option will be available soon.
 ## Getting Started
 
 Check the ["Getting Started"](https://realitytoolkit.realitycollective.net/) documentation for the Reality Toolkit and to learn more about this module.
+
+---
+
+## Services
+
+### UX Manager Service
+
+The UX Manager is a comprehensive framework for building user experience systems in Unity using **UI Toolkit exclusively** (no uGUI/Canvas).
+
+**Features:**
+
+- Centralized screen management with lifecycle control
+- MVVM-pattern screens and handlers for clean architecture
+- Event-driven design for decoupled component communication
+- Service Framework integration via Reality Collective
+- 100% UI Toolkit with programmatic UI generation
+- Automatic screen transitions and state management
+
+**Use When:**
+
+- Building complex, multi-screen applications
+- You need clean separation between UI logic and business logic
+- You want automatic screen lifecycle management
+- Your project uses UI Toolkit for all interfaces
+
+📖 **[Full Documentation](Documentation~/com.realitycollective.uxmanager.md)**
+
+---
+
+### Localization Service
+
+The Localization Service provides multi-language support with automatic fallback, runtime locale switching, and culture-aware formatting.
+
+**Features:**
+
+- Multi-language support with JSON catalogs
+- Two loading strategies: **Resources** (bundled) or **Addressables** (on-demand)
+- Automatic fallback to default locale
+- String keys and enum localization
+- Format string support with parameters
+- Culture-aware date/time/number formatting
+- Runtime locale switching with UI refresh events
+- Comprehensive key management and validation
+
+**Loading Strategies:**
+
+- **Resources**: Catalogs bundled with app (simple, small projects, 2-4 locales)
+- **Addressables**: On-demand loading with remote updates (production, 5+ locales, frequent updates)
+
+**Use When:**
+
+- Supporting multiple languages
+- Need automatic fallback handling
+- Want culture-specific date/time formatting
+- Building international applications
+
+📖 **[Full Documentation](Documentation~/com.realitycollective.localizationmanager.md)**
+
+---
