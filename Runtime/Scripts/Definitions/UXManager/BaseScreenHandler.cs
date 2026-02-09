@@ -33,6 +33,14 @@ namespace RealityCollective.UXManager.Services.ScreenManagement
         void Start()
         {
             UXScreenManager.RegisterScreen(ScreenId, this.gameObject);
+            InitializeHandlerInternal();
+        }
+
+        private void InitializeHandlerInternal()
+        {
+            if (isInitialized) return;
+
+            isInitialized = true;
             InitializeHandler();
         }
 
