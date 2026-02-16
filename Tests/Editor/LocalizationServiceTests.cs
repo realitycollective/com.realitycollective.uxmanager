@@ -244,7 +244,7 @@ namespace RealityCollective.UXManager.Tests.Editor
         public void GetEnumDisplayName_ReturnsCorrectNameForValidEnum()
         {
             // Arrange
-            var enumValue = CircleType.Silent;
+            var enumValue = AudioType.Silent;
 
             // Act
             string result = localizationService.GetEnumDisplayName(enumValue);
@@ -258,9 +258,9 @@ namespace RealityCollective.UXManager.Tests.Editor
         public void GetEnumDisplayName_WorksForMultipleEnumValues()
         {
             // Arrange & Act
-            string silentName = localizationService.GetEnumDisplayName(CircleType.Silent);
-            string speechName = localizationService.GetEnumDisplayName(CircleType.Speech);
-            string soundName = localizationService.GetEnumDisplayName(CircleType.Sound);
+            string silentName = localizationService.GetEnumDisplayName(AudioType.Silent);
+            string speechName = localizationService.GetEnumDisplayName(AudioType.Speech);
+            string soundName = localizationService.GetEnumDisplayName(AudioType.Sound);
 
             // Assert
             Assert.IsNotEmpty(silentName, "Should return non-empty display name for Silent");
@@ -272,14 +272,12 @@ namespace RealityCollective.UXManager.Tests.Editor
         public void GetEnumDisplayName_HandlesDifferentEnumTypes()
         {
             // Arrange & Act
-            string createSchedule = localizationService.GetEnumDisplayName(CircleScheduleType.Create);
-            string upcomingSchedule = localizationService.GetEnumDisplayName(CircleScheduleType.Upcoming);
-            string individualParticipant = localizationService.GetEnumDisplayName(CircleParticipantType.Individual);
+            string createSchedule = localizationService.GetEnumDisplayName(ScheduleType.Create);
+            string upcomingSchedule = localizationService.GetEnumDisplayName(ScheduleType.Upcoming);
 
             // Assert
             Assert.IsNotEmpty(createSchedule, "Should return non-empty display name for Create");
             Assert.IsNotEmpty(upcomingSchedule, "Should return non-empty display name for Upcoming");
-            Assert.IsNotEmpty(individualParticipant, "Should return non-empty display name for Individual");
         }
 
         [Test]
@@ -299,7 +297,7 @@ namespace RealityCollective.UXManager.Tests.Editor
         public void GetEnumDisplayName_ConstructsCorrectKeyFormat()
         {
             // Arrange
-            var enumValue = CircleType.Silent;
+            var enumValue = AudioType.Silent;
 
             // Act - Call GetEnumDisplayName which internally constructs key as "enum_{TypeName}_{Value}"
             string result = localizationService.GetEnumDisplayName(enumValue);
@@ -552,16 +550,13 @@ namespace RealityCollective.UXManager.Tests.Editor
             // Arrange
             (System.Enum enumValue, string expectedKey)[] enumKeys = new (System.Enum enumValue, string expectedKey)[]
             {
-                (CircleType.Silent, "enum_SplitInteractiveCardType_Silent"),
-                (CircleType.Speech, "enum_SplitInteractiveCardType_Speech"),
-                (CircleType.Sound, "enum_SplitInteractiveCardType_Sound"),
-                (CircleScheduleType.Create, "enum_SplitInteractiveCardScheduleType_Create"),
-                (CircleScheduleType.Upcoming, "enum_SplitInteractiveCardScheduleType_Upcoming"),
-                (CircleScheduleType.Ongoing, "enum_SplitInteractiveCardScheduleType_Ongoing"),
-                (CircleScheduleType.Completed, "enum_SplitInteractiveCardScheduleType_Completed"),
-                (CircleParticipantType.Individual, "enum_SplitInteractiveCardParticipantType_Individual"),
-                (CircleParticipantType.Group, "enum_SplitInteractiveCardParticipantType_Group"),
-                (CircleParticipantType.Meditation, "enum_SplitInteractiveCardParticipantType_Meditation")
+                (AudioType.Silent, "enum_SplitInteractiveCardType_Silent"),
+                (AudioType.Speech, "enum_SplitInteractiveCardType_Speech"),
+                (AudioType.Sound, "enum_SplitInteractiveCardType_Sound"),
+                (ScheduleType.Create, "enum_SplitInteractiveCardScheduleType_Create"),
+                (ScheduleType.Upcoming, "enum_SplitInteractiveCardScheduleType_Upcoming"),
+                (ScheduleType.Ongoing, "enum_SplitInteractiveCardScheduleType_Ongoing"),
+                (ScheduleType.Completed, "enum_SplitInteractiveCardScheduleType_Completed"),
             };
 
             // Act & Assert

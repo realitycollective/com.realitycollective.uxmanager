@@ -281,7 +281,7 @@ namespace RealityCollective.UXManager.Tests.Editor
             var serviceFr = new LocalizationService("ServiceFr", 102, profileFr);
             serviceFr.Initialize();
 
-            var enumValue = CircleType.Silent;
+            var enumValue = AudioType.Silent;
 
             // Act - Get enum display in each service with its forced locale
             string englishName = serviceEn.GetEnumDisplayName(enumValue);
