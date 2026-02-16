@@ -550,13 +550,9 @@ namespace RealityCollective.UXManager.Tests.Editor
             // Arrange
             (System.Enum enumValue, string expectedKey)[] enumKeys = new (System.Enum enumValue, string expectedKey)[]
             {
-                (AudioType.Silent, "enum_SplitInteractiveCardType_Silent"),
-                (AudioType.Speech, "enum_SplitInteractiveCardType_Speech"),
-                (AudioType.Sound, "enum_SplitInteractiveCardType_Sound"),
-                (ScheduleType.Create, "enum_SplitInteractiveCardScheduleType_Create"),
-                (ScheduleType.Upcoming, "enum_SplitInteractiveCardScheduleType_Upcoming"),
-                (ScheduleType.Ongoing, "enum_SplitInteractiveCardScheduleType_Ongoing"),
-                (ScheduleType.Completed, "enum_SplitInteractiveCardScheduleType_Completed"),
+                (AudioType.Silent, "enum_AudioType_Silent"),
+                (AudioType.Speech, "enum_AudioType_Speech"),
+                (AudioType.Sound, "enum_AudioType_Sound"),
             };
 
             // Act & Assert

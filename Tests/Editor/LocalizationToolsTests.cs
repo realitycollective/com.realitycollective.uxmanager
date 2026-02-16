@@ -83,11 +83,9 @@ namespace RealityCollective.UXManager.Tests.Editor
             {
                 "mainscreen_time", "mainscreen_view", "mainscreen_home", "mainscreen_create", "mainscreen_store",
                 "viewscreen_title", "viewdetails_type_prefix", "viewdetails_friends_reminders",
-                "enum_SplitInteractiveCardType_Silent", "enum_SplitInteractiveCardType_Speech", "enum_SplitInteractiveCardType_Sound",
-                "enum_SplitInteractiveCardScheduleType_Create", "enum_SplitInteractiveCardScheduleType_Upcoming",
-                "enum_SplitInteractiveCardScheduleType_Ongoing", "enum_SplitInteractiveCardScheduleType_Completed",
-                "enum_SplitInteractiveCardParticipantType_Individual", "enum_SplitInteractiveCardParticipantType_Group",
-                "enum_SplitInteractiveCardParticipantType_Meditation"
+                "enum_AudioType_Silent", "enum_AudioType_Speech", "enum_AudioType_Sound",
+                "enum_CircleParticipantType_Individual", "enum_CircleParticipantType_Group",
+                "enum_CircleParticipantType_Meditation"
             };
 
             var catalog = LoadCatalog(DefaultCatalogFile);
